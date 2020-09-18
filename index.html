@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <section>
+    <select id="expense-lists">
+      <option>Loading options</option>
+    </select>
+    <input id="new-list-name" type="text" placeholder="list name">
+    <button id="new-list-button">save</button>
+    <pre id="list-details-json"></pre>
+
+    <hr>
+
+    <label for="amount">Amount:</label><br>
+    <input type="number" id="amount" name="amount" value="0"><br>
+
+    <label for="date">Date:</label><br>
+    <input type="date" id="date" name="date" value="gg/mm/aa"><br><br>
+
+    <label for="description">Description:</label><br>
+    <input type="text" id="description" name="description" value="abc"><br><br>
+
+    <label for="title">Title:</label><br>
+    <input type="text" id="title" name="title" value="def"><br><br>
+
+    <label for="tags">Tags(insert tags separated by comma):</label><br>
+    <input type="text" id="tags" name="tags" value="pippo"><br><br>
+
+    <button id="save-expense">save</button>
+    <hr>
+    <a href="/export">Export Database</a>
+    <br>
+    <label for="restore-file-button">Import Database</label>
+    <input id="restore-file-button" type="file">
+  </section>
+  <script>
+    // const baseUrl = 'https://private-0b242-expensestracker.apiary-mock.com'
+    // const baseUrl = 'http://localhost:8080'
+    const baseUrl = ''
+    const dropdown = document.getElementById('expense-lists')
+    const newListButton = document.getElementById('new-list-button')
+    const newListName = document.getElementById('new-list-name')
+    const listDetailsJson = document.getElementById('list-details-json')
+    const saveExpenseButton = document.getElementById('save-expense')
+    const restoreBackupButton = document.getElementById('restore-file-button')
+
+    fetchLists()
+
+    newListButton.addEventListener('click', function (event) {
+      createList(newListName.value)
+        .then(_ => fetchLists())
+    })
+
+    dropdown.addEventListener('change', function (event) {
+      fetch(baseUrl + event.target.value)
+        .then(response => response.json())
+        .then(data => {
+          listDetailsJson.innerText = JSON.stringify(data)
+        })
+    })
+
+    function fetchLists () {
+      // GET
+      fetch(baseUrl + '/lists')
+        .then(response => response.json())
+        .then(data => {
+          dropdown.length = 0
+          for (let i = 0; i < data.length; i++){
+            let option = createOption(data[i].name, data[i].id)
+            dropdown.add(option)
+          }
+        })
+        .catch(console.error)
+
+    }
+
+    function createList (name) {
+      return fetch(baseUrl + '/lists', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ name })
+      })
+      .then(response => response.json())
+      .then(console.log)
+      .catch(console.error)
+
+    }
+
+    function createOption (text, value) {
+      let option = document.createElement('option')
+
+      option.text = text
+      option.value = '/lists/' + value
+
+      return option
+    }
+
+    saveExpenseButton.addEventListener('click', function (event) {
+      const data = {
+        date: document.getElementById('date').value,
+        description: document.getElementById('description').value,
+        title: document.getElementById('title').value,
+        amount: parseFloat( document.getElementById('amount').value ),
+        tags: document.getElementById('tags').value.split(',')
+      }
+
+      return fetch(baseUrl + dropdown.value + '/expenses', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      })
+      .then(response => response.json())
+      .then(console.log)
+      .catch(console.error)
+
+    })
+
+    restoreBackupButton.addEventListener('change', function (event) {
+
+      if (!confirm('are you sure you want to overwrite all the data?')) {
+        event.preventDefault()
+        return
+      }
+
+
+
+
+      const reader = new FileReader()
+      reader.onload = function() {
+
+        fetch(baseUrl + '/import', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body:new Uint8Array(this.result)
+        })
+      }
+
+      reader.readAsArrayBuffer(event.target.files[0])
+    })
+  </script>
+</body>
+</html>
