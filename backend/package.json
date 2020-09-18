@@ -1,0 +1,29 @@
+{
+  "name": "expenses-tracker",
+  "version": "1.0.0-private.0",
+  "description": "Expenses Tracker Backend Application",
+  "main": "index.js",
+  "private": true,
+  "config": {
+    "port": 80
+  },
+  "scripts": {
+    "start": "node index.js",
+    "node": "node",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/awesome-devops-and-continous-delivery/expenses-tracker.git"
+  },
+  "author": "Ivo von Putzer Reibegg <ivo.putzer@gmail.com> (https://github.com/ivoputzer)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/awesome-devops-and-continous-delivery/expenses-tracker/issues"
+  },
+  "homepage": "https://github.com/awesome-devops-and-continous-delivery/expenses-tracker#readme",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "express": "^4.17.1"
+  }
+}

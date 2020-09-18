@@ -1,0 +1,21 @@
+version: '3'
+
+services:
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    image: expenses-tracker-ui
+    container_name: expenses-tracker-ui-1
+    ports:
+      - "8080:80"
+    links:
+      - backend
+  backend:
+    build:
+        context: ./backend
+        dockerfile: Dockerfile
+    image: expenses-tracker-be
+    container_name: expenses-tracker-be
+    ports:
+      - "5000:80"
