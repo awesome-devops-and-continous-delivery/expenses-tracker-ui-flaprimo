@@ -1,10 +1,12 @@
 const express = require('express')
 const fs = require('fs')
 const parser = require('body-parser')
+const cors = require('cors')
 
 const app = express()
   .use(parser.json())
   .use(express.static('web'))
+  .use(cors())
 
 let lists
 
