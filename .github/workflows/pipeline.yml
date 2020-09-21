@@ -3,5 +3,6 @@ on: [push]
 jobs:
     say_hi:
         runs-on: ubuntu-latest
+        steps:
         - name: Hello World
           run: echo "hello world!"
